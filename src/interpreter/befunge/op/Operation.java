@@ -1,6 +1,7 @@
 package interpreter.befunge.op;
 
 import java.util.Arrays;
+import java.util.List;
 
 public enum Operation {
 
@@ -33,55 +34,17 @@ public enum Operation {
     END( '@' ),
     NONE();
 
-    //Arithmetic
-    Operation( char ... symbols ) {
-
+    Operation(char ... symbols) {
         this.symbols = symbols;
-
     }
 
     private char[] symbols;
-    public char[] getSymbols() {
 
-        return this.symbols;
-
-    }
-
-    /**
-     * This function transforms a symbol (read from the grid)
-     * into the matching operation.
-     */
-    public static Operation transform( char symbol ) {
-
-        Operation[] set = Operation.values();
-        for ( int i = 0; i < set.length; i++ ) {
-
-            Operation target = set[ i ];
-            if ( i > 0 ) {
-
-                if ( symbol == target.getSymbols()[ 0 ] ) {
-
-                    return target;
-
-                }
-
-            } else {
-
-                /* For performance reasons, only the symbol set of PUSH is
-                *  transformed into a list.
-                *  For all other operation types, the symbol is checked directly. */
-                if ( Arrays.asList( target.getSymbols() ).contains( symbol ) ) {
-
-                    return Operation.PUSH;
-
-                }
-
-            }
-
-        }
-
-        return Operation.NONE;
-
+    public static Operation transform(char symbol) {
+        return Arrays.stream(Operation.values())
+                     .filter(op -> List.of(op.symbols)
+                                       .contains(symbol))
+                     .findFirst().orElse(Operation.NONE);
     }
 
 }
